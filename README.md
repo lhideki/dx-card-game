@@ -59,3 +59,20 @@ CMD ["npm", "run", "preview"]
 docker build -t dx-card-game .
 docker run -p 3000:3000 dx-card-game
 ```
+## Google Cloud Runへのデプロイ
+
+以下はGoogle Cloud Runでデプロイする一例です。事前に`gcloud` CLIとGoogle Cloudプロジェクトの設定を済ませてください。
+
+1. DockerイメージをビルドしてContainer Registryへ送信
+   ```bash
+   gcloud builds submit --tag gcr.io/PROJECT_ID/dx-card-game
+   ```
+2. Cloud Runサービスを作成してデプロイ
+   ```bash
+   gcloud run deploy dx-card-game \
+     --image gcr.io/PROJECT_ID/dx-card-game \
+     --platform managed \
+     --region asia-northeast1 \
+     --allow-unauthenticated
+   ```
+   デプロイ完了後、表示されるURLからアプリにアクセスできます。
