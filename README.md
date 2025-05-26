@@ -59,7 +59,6 @@ CMD ["npm", "run", "preview"]
 docker build -t dx-card-game .
 docker run -p 3000:3000 dx-card-game
 ```
-
 ## Google Cloud Runへのデプロイ
 
 以下はGoogle Cloud Runでデプロイする一例です。事前に`gcloud` CLIとGoogle Cloudプロジェクトの設定を済ませてください。
