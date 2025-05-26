@@ -1,0 +1,6 @@
+{
+  "name": "課題解決DXカードゲーム",
+  "description": "A game where users solve challenges presented by a Game Master by selecting DX terminology cards. The game involves strategic card play, advice from the GM, and a bit of luck with shuffling.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
