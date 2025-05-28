@@ -1,24 +1,25 @@
+"use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GameState, Card, Theme, GameStage, Deck, EvaluationResponse, ChallengeHistoryEntry } from './types';
-import { INITIAL_DX_CARDS, GAME_THEMES, THEME_INITIAL_CHALLENGES, MAX_TURNS, INITIAL_HAND_SIZE, SHUFFLES_ALLOWED, ADVICE_ALLOWED, GAME_DECKS } from './constants';
-import ThemeSelector from './components/ThemeSelector';
-import DeckSelectorComponent from './components/DeckSelector'; 
-import GameBoard from './components/GameBoard';
-import GMDisplay from './components/GMDisplay';
-import GameControls from './components/GameControls';
-import LoadingSpinner from './components/LoadingSpinner';
+import { GameState, Card, Theme, GameStage, Deck, EvaluationResponse, ChallengeHistoryEntry } from '../types';
+import { INITIAL_DX_CARDS, GAME_THEMES, THEME_INITIAL_CHALLENGES, MAX_TURNS, INITIAL_HAND_SIZE, SHUFFLES_ALLOWED, ADVICE_ALLOWED, GAME_DECKS } from '../constants';
+import ThemeSelector from './ThemeSelector';
+import DeckSelectorComponent from './DeckSelector'; 
+import GameBoard from './GameBoard';
+import GMDisplay from './GMDisplay';
+import GameControls from './GameControls';
+import LoadingSpinner from './LoadingSpinner';
 import {
   evaluateCardPlay,
   getAdvice,
   shuffleChallengeEffect,
   getFinalEvaluation
-} from './services/geminiService';
+} from '../services/geminiService';
 import { shuffleArray, drawCards as drawCardsUtil, dealHand } from '@/utils/cardUtils';
 
 const MAX_CONCURRENT_PRE_EVALUATIONS = 3;
 
-const App = (): JSX.Element => {
+const CardGame = (): JSX.Element => {
   const initialGameState: GameState = {
     stage: GameStage.ThemeSelection,
     selectedTheme: null,
@@ -760,4 +761,4 @@ const App = (): JSX.Element => {
   );
 };
 
-export default App;
+export default CardGame;

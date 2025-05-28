@@ -3,6 +3,8 @@ node_modules/
 
 # Production build
 /dist/
+/.next/
+.turbo/
 
 # Logs
 logs/
