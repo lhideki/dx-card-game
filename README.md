@@ -155,3 +155,40 @@ spec:
   - percent: 100
     latestRevision: true
 ```
+
+
+### us-docker.pkg.devへのコンテナプッシュ手順
+
+以下の手順で `us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy` にイメージをプッシュできます。
+
+1. **環境準備**
+   - Docker と gcloud CLI をインストール
+   - `gcloud auth login` で認証
+   - `gcloud config set project YOUR_PROJECT_ID` でプロジェクトを設定
+
+2. **Artifact Registry 用の Docker 設定**
+   ```bash
+   gcloud auth configure-docker us-docker.pkg.dev
+   ```
+
+3. **イメージのビルドとタグ付け**
+   ```bash
+   docker build -t us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG .
+   ```
+
+4. **レジストリへプッシュ**
+   ```bash
+   docker push us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG
+   ```
+   Cloud Build を利用する場合:
+   ```bash
+   gcloud builds submit --tag us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG .
+   ```
+
+5. **Cloud Run へデプロイ (任意)**
+   ```bash
+   gcloud run deploy dx \
+     --image us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG \
+     --region us-west1 \
+     --allow-unauthenticated
+   ```
