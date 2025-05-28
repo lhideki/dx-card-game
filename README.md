@@ -249,3 +249,19 @@ spec:
 - **イメージレジストリ**: us-west1-docker.pkg.dev/dx-card-game/dx-card-game/app:latest
 - **サービス名**: dx-card-game
 - **URL**: https://dx-card-game-537832106570.us-west1.run.app
+
+## GitHub Actionsによる自動デプロイ
+
+このリポジトリには、`main` ブランチへのプッシュをトリガーとして Cloud Run へデプロイする GitHub Actions ワークフロー `.github/workflows/deploy.yml` が含まれています。
+
+### 必要なシークレット設定
+GitHub の **Settings > Secrets and variables > Actions** で以下を登録してください。
+
+- `GCP_PROJECT_ID` – 使用する Google Cloud プロジェクト ID
+- `GCP_REGION` – デプロイ先リージョン (例: `us-west1`)
+- `GAR_REPOSITORY` – Artifact Registry のリポジトリ名 (例: `dx-card-game/dx-card-game`)
+- `GCP_SA_KEY` – Cloud Run と Cloud Build の権限を持つサービスアカウントの JSON キー
+- `GEMINI_API_KEY` – アプリが利用する Gemini API キー
+
+### 実行内容
+ワークフローでは Docker イメージをビルドして Artifact Registry にプッシュし、そのイメージを用いて Cloud Run サービス `dx-card-game` を更新します。
