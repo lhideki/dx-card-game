@@ -39,20 +39,26 @@ npm run build
 
 カードセットやテーマを追加・編集することで、独自のゲームルールを作成することも可能です。
 
-## Cloud Run向けDockerfile例
+## Dockerfile
 
-Cloud Runへデプロイするための基本的なDockerfile例です。コンテナ実行時にCloud Runから渡される`PORT`変数を利用してNext.jsを起動します。
+本リポジトリにはCloud Run向けのDockerfileが同梱されています。コンテナ起動時に渡される`PORT`環境変数を用いてアプリを実行します。
 
 ```Dockerfile
-FROM node:18
+# Use Node.js 18 to install dependencies and build the Next.js app
+FROM node:18 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
-ENV HOSTNAME=0.0.0.0
+RUN npm run build && npm prune --omit=dev
+
+FROM node:18-slim AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build /app .
+ENV PORT=8080
 EXPOSE 8080
-CMD ["sh", "-c", "next start -p $PORT"]
+CMD ["npm", "start"]
 ```
 
 ### ローカルでのDocker動作確認
