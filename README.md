@@ -199,41 +199,53 @@ spec:
      --region us-west1 \
      --allow-unauthenticated
    ```
-```
 
+---
 
-### us-docker.pkg.devへのコンテナプッシュ手順
+## ✅ 成功したデプロイメント
 
-以下の手順で `us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy` にイメージをプッシュできます。
+**本アプリケーションは正常にCloud Runにデプロイされました！**
 
-1. **環境準備**
-   - Docker と gcloud CLI をインストール
-   - `gcloud auth login` で認証
-   - `gcloud config set project YOUR_PROJECT_ID` でプロジェクトを設定
+🌐 **ライブアプリケーション**: https://dx-card-game-537832106570.us-west1.run.app
 
-2. **Artifact Registry 用の Docker 設定**
+### 実際のデプロイ手順 (成功例)
+
+このプロジェクトは以下の手順で正常にデプロイされました：
+
+1. **TypeScript エラーの修正**
+   - API routes のコンパイルエラーを解決
+   - Docker build が成功するように修正
+
+2. **Artifact Registry リポジトリの作成**
    ```bash
-   gcloud auth configure-docker us-docker.pkg.dev
+   gcloud artifacts repositories create dx-card-game \
+     --repository-format=docker \
+     --location=us-west1 \
+     --description="Docker repository for DX Card Game"
    ```
 
-3. **イメージのビルドとタグ付け**
+3. **Docker認証設定**
    ```bash
-   docker build -t us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG .
+   gcloud auth configure-docker us-west1-docker.pkg.dev
    ```
 
-4. **レジストリへプッシュ**
+4. **イメージのビルドとプッシュ**
    ```bash
-   docker push us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG
-   ```
-   Cloud Build を利用する場合:
-   ```bash
-   gcloud builds submit --tag us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG .
+   gcloud builds submit --tag us-west1-docker.pkg.dev/dx-card-game/dx-card-game/app:latest .
    ```
 
-5. **Cloud Run へデプロイ (任意)**
+5. **Cloud Runへのデプロイ**
    ```bash
-   gcloud run deploy dx \
-     --image us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy:TAG \
+   gcloud run deploy dx-card-game \
+     --image us-west1-docker.pkg.dev/dx-card-game/dx-card-game/app:latest \
      --region us-west1 \
-     --allow-unauthenticated
+     --allow-unauthenticated \
+     --set-env-vars GEMINI_API_KEY=YOUR_API_KEY
    ```
+
+### デプロイ情報
+- **プロジェクト**: dx-card-game
+- **リージョン**: us-west1
+- **イメージレジストリ**: us-west1-docker.pkg.dev/dx-card-game/dx-card-game/app:latest
+- **サービス名**: dx-card-game
+- **URL**: https://dx-card-game-537832106570.us-west1.run.app
