@@ -20,17 +20,17 @@
    ```bash
    npm run dev
    ```
-   起動後、ブラウザで`http://localhost:5173`(デフォルト)にアクセスしてください。
+   起動後、ブラウザで`http://localhost:3000`にアクセスしてください。
 
 ## ビルド
 本番用ビルドは以下で実行できます。
 ```bash
 npm run build
 ```
-ビルド結果は`dist`ディレクトリに出力され、`npm run preview`で確認できます。
+ビルド完了後、`npm start`でサーバーを起動できます。
 
 ## ファイル構成
-- `App.tsx` – ゲーム全体のロジック
+- `components/Game.tsx` – ゲーム全体のロジック
 - `components/` – 各種Reactコンポーネント
 - `constants.ts` – カード・テーマなどの定義
 - `services/geminiService.ts` – Gemini APIとの通信処理
@@ -49,7 +49,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 ENV HOSTNAME=0.0.0.0
-CMD ["npm", "run", "preview"]
+CMD ["npm", "start"]
 ```
 
 ビルド後、App Runnerのサービス設定で上記コンテナイメージを指定し、`HOSTNAME` 環境変数を`0.0.0.0`に設定してください。これによりヘルスチェックが通りやすくなります。
