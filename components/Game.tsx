@@ -19,7 +19,7 @@ import { shuffleArray, drawCards as drawCardsUtil, dealHand } from '@/utils/card
 
 const MAX_CONCURRENT_PRE_EVALUATIONS = 3;
 
-const CardGame = (): JSX.Element => {
+const CardGame: React.FC = () => {
   const initialGameState: GameState = {
     stage: GameStage.ThemeSelection,
     selectedTheme: null,
