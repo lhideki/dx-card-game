@@ -4,7 +4,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameState, Card, Theme, GameStage, Deck, EvaluationResponse, ChallengeHistoryEntry } from '../types';
 import { INITIAL_DX_CARDS, GAME_THEMES, THEME_INITIAL_CHALLENGES, MAX_TURNS, INITIAL_HAND_SIZE, SHUFFLES_ALLOWED, ADVICE_ALLOWED, GAME_DECKS } from '../constants';
 import ThemeSelector from './ThemeSelector';
+<<<<<<< HEAD
+import DeckSelectorComponent from './DeckSelector';
+=======
 import DeckSelectorComponent from './DeckSelector'; 
+>>>>>>> origin/main
 import GameBoard from './GameBoard';
 import GMDisplay from './GMDisplay';
 import GameControls from './GameControls';
@@ -19,7 +23,11 @@ import { shuffleArray, drawCards as drawCardsUtil, dealHand } from '@/utils/card
 
 const MAX_CONCURRENT_PRE_EVALUATIONS = 3;
 
+<<<<<<< HEAD
+const CardGame = (): React.JSX.Element => {
+=======
 const CardGame = (): JSX.Element => {
+>>>>>>> origin/main
   const initialGameState: GameState = {
     stage: GameStage.ThemeSelection,
     selectedTheme: null,
@@ -27,14 +35,14 @@ const CardGame = (): JSX.Element => {
     selectedDeckId2: null,
     activeDeckId: null,
     selectingDeckSlot: null,
-    initialChallenge: '', 
+    initialChallenge: '',
     currentChallenge: '',
     challengeHistory: [],
     playerHand1: [],
     playerHand2: [],
-    deck1: [], 
+    deck1: [],
     deck2: [],
-    availableCardsForDeck1: [], 
+    availableCardsForDeck1: [],
     availableCardsForDeck2: [],
     turn: 0,
     shufflesRemaining: SHUFFLES_ALLOWED,
@@ -97,7 +105,7 @@ const CardGame = (): JSX.Element => {
       preEvaluationStatus: {},
     }));
   };
-  
+
   const getActiveHand = useCallback(() => {
     const currentGameState = gameStateRef.current;
     if (currentGameState.activeDeckId === currentGameState.selectedDeckId1) {
@@ -112,7 +120,7 @@ const CardGame = (): JSX.Element => {
   useEffect(() => {
     const currentGameState = gameStateRef.current;
     const activeHand = getActiveHand();
-  
+
     if (
       (currentGameState.stage === GameStage.PlayerTurn || currentGameState.stage === GameStage.GMAdvising) &&
       activeHand.length > 0 &&
@@ -122,34 +130,34 @@ const CardGame = (): JSX.Element => {
     ) {
       let currentPendingCount = Object.values(currentGameState.preEvaluationStatus).filter(s => s === 'pending').length;
       const statusUpdatesToBatch: Record<string, 'idle' | 'pending' | 'success' | 'error' | 'aborted'> = {};
-  
+
       for (const card of activeHand) {
         const cardCurrentStatus = currentGameState.preEvaluationStatus[card.id];
         const needsEvaluation = !cardCurrentStatus || ['idle', 'aborted', 'error'].includes(cardCurrentStatus);
-  
+
         if (needsEvaluation) {
           const existingPreview = currentGameState.preEvaluatedResults[card.id];
           if (existingPreview && existingPreview.challenge === currentGameState.currentChallenge && cardCurrentStatus === 'success') {
             continue; // Already successfully evaluated for this exact challenge
           }
-  
+
           if (currentPendingCount < MAX_CONCURRENT_PRE_EVALUATIONS) {
             statusUpdatesToBatch[card.id] = 'pending';
             currentPendingCount++;
-  
+
             const controller = new AbortController();
             preEvalControllersRef.current[card.id] = controller;
             const capturedChallenge = currentGameState.currentChallenge;
             const capturedThemeName = currentGameState.selectedTheme.name;
-  
+
             evaluateCardPlay(capturedChallenge, card, capturedThemeName, controller.signal)
-              .then(result => {
+              .then((result: EvaluationResponse) => {
                 if (controller.signal.aborted) return;
                 setGameState(prev => {
                   const currentActiveHand = prev.activeDeckId === prev.selectedDeckId1 ? prev.playerHand1 : prev.playerHand2;
                   const isActiveDeckCard = currentActiveHand.some(c => c.id === card.id);
                   const isValidStage = prev.stage === GameStage.PlayerTurn || prev.stage === GameStage.GMAdvising;
-  
+
                   if (prev.currentChallenge === capturedChallenge && isValidStage && isActiveDeckCard) {
                     return {
                       ...prev,
@@ -163,7 +171,7 @@ const CardGame = (): JSX.Element => {
                   return prev;
                 });
               })
-              .catch(error => {
+              .catch((error: Error) => {
                 if (controller.signal.aborted) {
                   setGameState(prev => {
                     const isValidStage = prev.stage === GameStage.PlayerTurn || prev.stage === GameStage.GMAdvising;
@@ -203,7 +211,7 @@ const CardGame = (): JSX.Element => {
           }
         }
       }
-  
+
       if (Object.keys(statusUpdatesToBatch).length > 0) {
         setGameState(prev => ({
           ...prev,
@@ -217,13 +225,13 @@ const CardGame = (): JSX.Element => {
       }
     }
   }, [
-      gameState.stage, 
-      gameState.activeDeckId, 
+      gameState.stage,
+      gameState.activeDeckId,
       // getActiveHand is useCallback, but its dependencies (playerHand1/2, activeDeckId) are key.
       // Explicitly list the state slices that determine the active hand's content and other conditions.
-      gameState.playerHand1, 
-      gameState.playerHand2, 
-      gameState.currentChallenge, 
+      gameState.playerHand1,
+      gameState.playerHand2,
+      gameState.currentChallenge,
       gameState.selectedTheme,
       gameState.preEvaluationStatus, // Re-run if statuses change (e.g., a slot opens)
       gameState.preEvaluatedResults, // Re-run if results change (e.g. challenge mismatch)
@@ -233,23 +241,23 @@ const CardGame = (): JSX.Element => {
 
   const handleThemeSelect = useCallback(async (theme: Theme) => {
     clearPreEvaluationState();
-    setGameState(prev => ({ 
-      ...prev, 
-      isLoading: true, 
-      stage: GameStage.ThemeSelection, 
-      selectedTheme: theme, 
-      selectingDeckSlot: 1, 
-      gmMessage: `「${theme.name}」を選択しました。次に1つ目の専門スキルセットを選択してください。` 
+    setGameState(prev => ({
+      ...prev,
+      isLoading: true,
+      stage: GameStage.ThemeSelection,
+      selectedTheme: theme,
+      selectingDeckSlot: 1,
+      gmMessage: `「${theme.name}」を選択しました。次に1つ目の専門スキルセットを選択してください。`
     }));
-    
+
     setTimeout(() => {
         setGameState(prev => ({
             ...prev,
             isLoading: false,
-            stage: GameStage.DeckSelection, 
+            stage: GameStage.DeckSelection,
         }));
-    }, 300); 
-    
+    }, 300);
+
   }, []);
 
   const handleDeckSelect = useCallback(async (deckId: string) => {
@@ -260,7 +268,7 @@ const CardGame = (): JSX.Element => {
     if (!selectedDeckInfo || !localSelectedTheme || !currentSelectingSlot) return;
 
     setGameState(prev => ({ ...prev, isLoading: true, gmMessage: `「${selectedDeckInfo.name}」デッキを準備中...`}));
-    
+
     const cardsForThisDeck = INITIAL_DX_CARDS.filter(card => selectedDeckInfo.cardIds.includes(card.id));
 
     if (currentSelectingSlot === 1) {
@@ -269,7 +277,7 @@ const CardGame = (): JSX.Element => {
             selectedDeckId1: deckId,
             availableCardsForDeck1: cardsForThisDeck,
             selectingDeckSlot: 2,
-            isLoading: false, 
+            isLoading: false,
             gmMessage: `1つ目のスキルセットとして「${selectedDeckInfo.name}」を選択しました。\n次に2つ目の専門スキルセットを選択してください。`
         }));
     } else if (currentSelectingSlot === 2) {
@@ -311,37 +319,37 @@ const CardGame = (): JSX.Element => {
             deck1: newDeckState1,
             playerHand2: drawn2,
             deck2: newDeckState2,
-            activeDeckId: prev.selectedDeckId1, 
+            activeDeckId: prev.selectedDeckId1,
             stage: GameStage.PlayerTurn,
             initialChallenge: selectedInitialChallenge,
-            currentChallenge: selectedInitialChallenge, 
+            currentChallenge: selectedInitialChallenge,
             challengeHistory: [initialChallengeHistoryEntry], // Updated
             turn: 1,
-            cumulativeCost: initialCumulativeCost, 
+            cumulativeCost: initialCumulativeCost,
             gmMessage: `ゲーム開始！現在の課題は以下の通りです。\n手札から一枚選んでください。\n（アクティブスキルセット: ${GAME_DECKS.find(d=>d.id === prev.selectedDeckId1)?.name || 'デッキ1'}）`,
             isLoading: false,
-            newlyDrawnCardId: drawn1.length > 0 ? drawn1[0].id : null, 
+            newlyDrawnCardId: drawn1.length > 0 ? drawn1[0].id : null,
             selectingDeckSlot: null,
         }));
-        clearPreEvaluationState(); 
+        clearPreEvaluationState();
     }
   }, [drawCards]);
 
   const handleSwitchActiveDeck = useCallback((newActiveDeckId: string) => {
     const current = gameStateRef.current;
-    if (newActiveDeckId === current.activeDeckId || 
+    if (newActiveDeckId === current.activeDeckId ||
         (newActiveDeckId !== current.selectedDeckId1 && newActiveDeckId !== current.selectedDeckId2)) {
       return;
     }
-    clearPreEvaluationState(); 
+    clearPreEvaluationState();
 
     const newActiveDeckName = GAME_DECKS.find(d => d.id === newActiveDeckId)?.name || (newActiveDeckId === current.selectedDeckId1 ? "デッキ1" : "デッキ2");
-    
+
     setGameState(prev => ({
       ...prev,
       activeDeckId: newActiveDeckId,
       gmMessage: `スキルセットを「${newActiveDeckName}」に切り替えました。手札を確認し、カードを選択してください。`,
-      newlyDrawnCardId: null, 
+      newlyDrawnCardId: null,
     }));
   }, []);
 
@@ -356,7 +364,7 @@ const CardGame = (): JSX.Element => {
         delete preEvalControllersRef.current[controllerCardId];
       }
     });
-  
+
     setGameState(prev => ({
       ...prev,
       isLoading: true,
@@ -365,14 +373,14 @@ const CardGame = (): JSX.Element => {
       lastPlayedCard: card,
       newlyDrawnCardId: null,
     }));
-  
+
     let evaluationResult: EvaluationResponse | null = null;
-  
+
     try {
       const currentChallengeForEval = current.currentChallenge;
       const preEvalForThisCard = current.preEvaluatedResults[card.id];
       const preEvalStatusForThisCard = current.preEvaluationStatus[card.id];
-  
+
       if (preEvalForThisCard && preEvalForThisCard.challenge === currentChallengeForEval && preEvalStatusForThisCard === 'success') {
         evaluationResult = preEvalForThisCard.result;
          if (preEvalControllersRef.current[card.id]) { // Abort its own controller if pre-eval was used
@@ -386,11 +394,11 @@ const CardGame = (): JSX.Element => {
         }
         evaluationResult = await evaluateCardPlay(currentChallengeForEval, card, current.selectedTheme!.name);
       }
-  
+
       if (!evaluationResult) throw new Error("Evaluation result was unexpectedly null.");
-  
+
       const { newChallenge, evaluation, situationImproved } = evaluationResult;
-      
+
       const currentTurn = current.turn;
       const currentChallengeHistory = current.challengeHistory;
 
@@ -423,46 +431,46 @@ const CardGame = (): JSX.Element => {
         }
         handUpdateProp = { playerHand2: [...newHandArray, ...drawnCard], deck2: nextDeckState };
       }
-      
+
       const newCumulativeCost = current.cumulativeCost + card.cost;
       const updatedChallengeHistoryEntry: ChallengeHistoryEntry = {
         challenge: newChallenge,
         cumulativeCost: newCumulativeCost,
       };
       const updatedChallengeHistory = [...currentChallengeHistory, updatedChallengeHistoryEntry];
-  
+
       setGameState(prev => ({
         ...prev,
         ...handUpdateProp,
         currentChallenge: newChallenge,
         challengeHistory: updatedChallengeHistory,
-        cumulativeCost: newCumulativeCost, 
+        cumulativeCost: newCumulativeCost,
         gmMessage: `${evaluation}\n${situationImproved ? '状況は改善しました。' : '残念ながら、状況は悪化または停滞しました。'}`,
         isLoading: false,
-        turn: prev.turn + 1, 
+        turn: prev.turn + 1,
         stage: prev.turn + 1 > MAX_TURNS ? GameStage.GameOverGeneratingEval : GameStage.PlayerTurn,
         newlyDrawnCardId: newlyDrawnId,
       }));
-  
+
     } catch (error: any) {
        if (error.name === 'AbortError') {
         console.warn(`Evaluation for ${card.term} was aborted.`);
       } else {
         console.error("Failed to evaluate card play:", error);
       }
-      setGameState(prev => ({ 
-        ...prev, 
-        isLoading: false, 
-        stage: GameStage.PlayerTurn, 
-        gmMessage: `カード評価中にエラーが発生しました: ${error.message || "不明なエラー"}. もう一度お試しください。` 
+      setGameState(prev => ({
+        ...prev,
+        isLoading: false,
+        stage: GameStage.PlayerTurn,
+        gmMessage: `カード評価中にエラーが発生しました: ${error.message || "不明なエラー"}. もう一度お試しください。`
       }));
     } finally {
       // Clear all pre-evals (including for the card just played, if its controller wasn't already deleted)
       // and trigger new ones for the updated hand/challenge.
-      clearPreEvaluationState(); 
+      clearPreEvaluationState();
     }
   }, [drawCards]);
-  
+
   useEffect(() => {
     const performFinalEvaluation = async () => {
         const currentGameState = gameStateRef.current;
@@ -471,14 +479,14 @@ const CardGame = (): JSX.Element => {
             try {
                 const challengeTextsForHistory = currentGameState.challengeHistory.map(entry => entry.challenge);
                 const finalEvalResult = await getFinalEvaluation(
-                    currentGameState.currentChallenge, 
-                    currentGameState.selectedTheme.name, 
+                    currentGameState.currentChallenge,
+                    currentGameState.selectedTheme.name,
                     challengeTextsForHistory, // Pass only challenge texts for Gemini prompt
-                    currentGameState.cumulativeCost 
+                    currentGameState.cumulativeCost
                 );
                 setGameState(prev => ({
                     ...prev,
-                    gmMessage: finalEvalResult.evaluationText, 
+                    gmMessage: finalEvalResult.evaluationText,
                     finalScore: finalEvalResult.score,
                     isLoading: false,
                     stage: GameStage.GameOver,
@@ -486,29 +494,29 @@ const CardGame = (): JSX.Element => {
             } catch (error: any) {
                 console.error("Failed to get final evaluation:", error);
                 const errorMessage = error.message || "最終評価の取得中に不明なエラーが発生しました。";
-                setGameState(prev => ({ 
-                    ...prev, 
-                    isLoading: false, 
-                    stage: GameStage.GameOver, 
-                    gmMessage: `最終評価の取得中にエラーが発生しました: ${errorMessage}`, 
-                    finalScore: undefined 
+                setGameState(prev => ({
+                    ...prev,
+                    isLoading: false,
+                    stage: GameStage.GameOver,
+                    gmMessage: `最終評価の取得中にエラーが発生しました: ${errorMessage}`,
+                    finalScore: undefined
                 }));
             }
         }
     };
     performFinalEvaluation();
-  }, [gameState.stage, gameState.cumulativeCost]); 
+  }, [gameState.stage, gameState.cumulativeCost]);
 
 
   const handleShuffleCards = useCallback(async () => {
     clearPreEvaluationState();
     const current = gameStateRef.current;
     if (current.shufflesRemaining <= 0 || !current.selectedTheme || !current.selectedDeckId1 || !current.selectedDeckId2 || current.isLoading) return;
-    
+
     setGameState(prev => ({ ...prev, isLoading: true, stage: GameStage.ShufflingCards, gmMessage: "両方のスキルセットのカードをシャッフルし、状況がカオスに変化します...", newlyDrawnCardId: null }));
     try {
       const newChallengeSituation = await shuffleChallengeEffect(current.currentChallenge, current.selectedTheme.name);
-      
+
       const { hand: drawn1, deck: newDeckState1 } = dealHand(
           current.availableCardsForDeck1,
           INITIAL_HAND_SIZE,
@@ -519,7 +527,7 @@ const CardGame = (): JSX.Element => {
           INITIAL_HAND_SIZE,
           current.lastPlayedCard,
       );
-      
+
       const shuffleChallengeHistoryEntry: ChallengeHistoryEntry = {
         challenge: `シャッフルにより状況変化: ${newChallengeSituation}`,
         cumulativeCost: current.cumulativeCost // Cost doesn't change with shuffle, but record current cost
@@ -538,7 +546,7 @@ const CardGame = (): JSX.Element => {
         gmMessage: `カードをシャッフルしました！両方の手札が新しくなり、課題の状況が次のように変化しました...`,
         isLoading: false,
         stage: GameStage.PlayerTurn,
-        newlyDrawnCardId: null, 
+        newlyDrawnCardId: null,
       }));
     } catch (error) {
       console.error("Failed to shuffle cards:", error);
@@ -550,7 +558,7 @@ const CardGame = (): JSX.Element => {
     const current = gameStateRef.current;
     const activeHand = getActiveHand(); // Gets the current active hand
     if (current.adviceRemaining <= 0 || !current.selectedTheme || !current.activeDeckId || current.isLoading || activeHand.length === 0) return;
-    
+
     // Pre-evaluations continue during GMAdvising, so no need to clear them here specifically.
     setGameState(prev => ({ ...prev, isLoading: true, stage: GameStage.GMAdvising, gmMessage: "専門家からのアドバイスを解析中..." }));
     try {
@@ -572,15 +580,15 @@ const CardGame = (): JSX.Element => {
     clearPreEvaluationState();
     setGameState(initialGameState);
   };
-  
+
   const renderThemeSelectionStage = () => (
-    gameState.isLoading && gameState.stage === GameStage.ThemeSelection && !gameState.selectingDeckSlot ? 
+    gameState.isLoading && gameState.stage === GameStage.ThemeSelection && !gameState.selectingDeckSlot ?
     <div className="flex justify-center items-center h-64"><LoadingSpinner /></div> :
     <ThemeSelector themes={GAME_THEMES} onSelectTheme={handleThemeSelect} />
   );
-  
+
   const renderDeckSelectionStage = () => {
-    if (!gameState.selectingDeckSlot) { 
+    if (!gameState.selectingDeckSlot) {
         return <div className="text-center p-4">デッキ選択の準備中です...</div>;
     }
     if (gameState.isLoading && gameState.stage === GameStage.DeckSelection) {
@@ -588,15 +596,15 @@ const CardGame = (): JSX.Element => {
     }
     return (
         <>
-        <GMDisplay 
-            message={gameState.gmMessage} 
-            currentChallenge="" 
-            isLoading={false} 
+        <GMDisplay
+            message={gameState.gmMessage}
+            currentChallenge=""
+            isLoading={false}
             stage={gameState.stage}
         />
-        <DeckSelectorComponent 
-            decks={GAME_DECKS} 
-            onSelectDeck={handleDeckSelect} 
+        <DeckSelectorComponent
+            decks={GAME_DECKS}
+            onSelectDeck={handleDeckSelect}
             selectingDeckSlot={gameState.selectingDeckSlot}
             deck1IdAlreadySelected={gameState.selectedDeckId1}
         />
@@ -605,17 +613,17 @@ const CardGame = (): JSX.Element => {
   }
 
   const renderActiveDeckInfo = () => {
-    if (gameState.stage !== GameStage.PlayerTurn && 
+    if (gameState.stage !== GameStage.PlayerTurn &&
         gameState.stage !== GameStage.EvaluatingPlay && // Added to show during inline eval
-        gameState.stage !== GameStage.GameOver && 
+        gameState.stage !== GameStage.GameOver &&
         gameState.stage !== GameStage.GMAdvising) return null;
     if (!gameState.selectedDeckId1 || !gameState.selectedDeckId2) return null;
 
 
     const deck1 = GAME_DECKS.find(d => d.id === gameState.selectedDeckId1);
     const deck2 = GAME_DECKS.find(d => d.id === gameState.selectedDeckId2);
-    
-    if (!deck1 || !deck2) return null; 
+
+    if (!deck1 || !deck2) return null;
 
     const activeDeckIs1 = gameState.activeDeckId === gameState.selectedDeckId1;
     const activeDeckName = activeDeckIs1 ? deck1.name : deck2.name;
@@ -636,13 +644,13 @@ const CardGame = (): JSX.Element => {
   };
 
 
-  const renderLoadingStage = () => ( 
+  const renderLoadingStage = () => (
     <>
-    <GMDisplay 
-      message={gameState.gmMessage} 
+    <GMDisplay
+      message={gameState.gmMessage}
       initialChallenge={gameState.initialChallenge}
-      currentChallenge={gameState.currentChallenge} 
-      isLoading={true} 
+      currentChallenge={gameState.currentChallenge}
+      isLoading={true}
       lastPlayedCard={gameState.lastPlayedCard}
       turn={gameState.turn}
       maxTurns={MAX_TURNS}
@@ -657,11 +665,11 @@ const CardGame = (): JSX.Element => {
     const activeHand = getActiveHand();
     return (
         <>
-        <GMDisplay 
-            message={gameState.gmMessage} 
+        <GMDisplay
+            message={gameState.gmMessage}
             initialChallenge={gameState.initialChallenge}
-            currentChallenge={gameState.currentChallenge} 
-            isLoading={gameState.isLoading && gameState.stage !== GameStage.GMAdvising} 
+            currentChallenge={gameState.currentChallenge}
+            isLoading={gameState.isLoading && gameState.stage !== GameStage.GMAdvising}
             lastPlayedCard={gameState.lastPlayedCard}
             turn={gameState.turn}
             maxTurns={MAX_TURNS}
@@ -669,18 +677,18 @@ const CardGame = (): JSX.Element => {
             finalScore={gameState.finalScore}
         />
         {renderActiveDeckInfo()}
-        <GameBoard 
-            cards={activeHand} 
-            onPlayCard={handlePlayCard} 
+        <GameBoard
+            cards={activeHand}
+            onPlayCard={handlePlayCard}
             newlyDrawnCardId={gameState.newlyDrawnCardId}
-            preEvaluationStatus={gameState.preEvaluationStatus} 
+            preEvaluationStatus={gameState.preEvaluationStatus}
         />
         <GameControls
             shufflesRemaining={gameState.shufflesRemaining}
             adviceRemaining={gameState.adviceRemaining}
             onShuffle={handleShuffleCards}
             onAdvice={handleRequestAdvice}
-            canPlay={!gameState.isLoading && (gameState.stage === GameStage.PlayerTurn || gameState.stage === GameStage.GMAdvising)} 
+            canPlay={!gameState.isLoading && (gameState.stage === GameStage.PlayerTurn || gameState.stage === GameStage.GMAdvising)}
             turn={gameState.turn}
             maxTurns={MAX_TURNS}
             activeDeckId={gameState.activeDeckId}
@@ -696,14 +704,14 @@ const CardGame = (): JSX.Element => {
 
   const renderGameOverStage = () => (
     <>
-      <GMDisplay 
+      <GMDisplay
         message={gameState.gmMessage} // This will now contain only the evaluationText
         challengeHistory={gameState.challengeHistory} // Pass the history (now with cumulative costs)
-        isLoading={false} 
+        isLoading={false}
         stage={gameState.stage}
         finalScore={gameState.finalScore}
         cumulativeCost={gameState.cumulativeCost} // Pass final cumulativeCost
-        currentChallenge={gameState.currentChallenge} 
+        currentChallenge={gameState.currentChallenge}
       />
       {renderActiveDeckInfo()}
       <div className="mt-8 text-center">
@@ -722,7 +730,7 @@ const CardGame = (): JSX.Element => {
     switch (gameState.stage) {
       case GameStage.ThemeSelection:
         return renderThemeSelectionStage();
-      
+
       case GameStage.DeckSelection:
         return renderDeckSelectionStage();
 
@@ -732,12 +740,12 @@ const CardGame = (): JSX.Element => {
 
       case GameStage.EvaluatingPlay: // Changed to use renderPlayerTurnStage for inline loading
       case GameStage.PlayerTurn:
-      case GameStage.GMAdvising: 
+      case GameStage.GMAdvising:
         return renderPlayerTurnStage();
 
       case GameStage.GameOver:
         return renderGameOverStage();
-        
+
       default:
         return <div role="alert" className="text-red-400 text-center p-4">予期せぬゲームステージ ({gameState.stage}) です。ページを再読み込みしてください。</div>;
     }

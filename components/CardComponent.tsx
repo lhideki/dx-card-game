@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, GameState } from '../types'; // GameState for evaluationStatus type
-import { InfoIcon, BriefcaseIcon, SparklesIcon, TagIcon, ClockIcon, ExclamationTriangleIcon, CurrencyYenIcon } from './icons.tsx'; 
+import { InfoIcon, BriefcaseIcon, SparklesIcon, TagIcon, ClockIcon, ExclamationTriangleIcon, CurrencyYenIcon } from './icons';
 
 interface CardComponentProps {
   card: Card;
@@ -19,7 +19,7 @@ const ImpactPips: React.FC<{ level: 'High' | 'Medium' | 'Low' }> = ({ level }) =
       <span
         key={i}
         className={`inline-block w-2 h-2 rounded-full ml-1 ${
-          i < pipCount ? 'bg-cyan-500' : 'bg-slate-600' 
+          i < pipCount ? 'bg-cyan-500' : 'bg-slate-600'
         }`}
         aria-label={i < pipCount ? "インパクトあり" : "インパクトなし"}
       ></span>
@@ -63,10 +63,10 @@ const subtleCardStockPattern = `data:image/svg+xml,${encodeURIComponent(
 )}`;
 
 
-const CardComponent: React.FC<CardComponentProps> = ({ 
-  card, 
-  onPlayCard, 
-  isPlayable = false, 
+const CardComponent: React.FC<CardComponentProps> = ({
+  card,
+  onPlayCard,
+  isPlayable = false,
   isNew = false,
   evaluationStatus
 }) => {
@@ -77,29 +77,29 @@ const CardComponent: React.FC<CardComponentProps> = ({
   };
 
   const baseContainerClasses = 'relative rounded-xl p-4 flex flex-col justify-between transition-all duration-300 ease-in-out border-2 w-[240px] min-h-[380px] group'; // Increased min-h for cost
-  
-  let cardGradientValue = 'linear-gradient(to bottom right, #475569, #1e293b)'; 
-  let borderColor = 'border-slate-500'; 
-  let shadow = 'shadow-xl shadow-slate-900/60'; 
+
+  let cardGradientValue = 'linear-gradient(to bottom right, #475569, #1e293b)';
+  let borderColor = 'border-slate-500';
+  let shadow = 'shadow-xl shadow-slate-900/60';
   let termTextColor = 'text-cyan-400';
   let termIconColor = 'text-cyan-500';
   let cursorStyles = '';
   let animationStyles = '';
   let hoverStyles = 'group-hover:shadow-2xl group-hover:shadow-cyan-700/30';
   let newBadge = null;
-  let innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(100,116,139,0.4)]'; 
+  let innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(100,116,139,0.4)]';
 
   if (isNew) {
-    cardGradientValue = `linear-gradient(145deg, #0f172a 0%, #1e293b 40%, #065f46 100%)`; 
-    borderColor = 'border-cyan-400'; 
-    shadow = 'shadow-2xl shadow-cyan-500/50'; 
-    animationStyles = 'animate-pulse-border'; 
+    cardGradientValue = `linear-gradient(145deg, #0f172a 0%, #1e293b 40%, #065f46 100%)`;
+    borderColor = 'border-cyan-400';
+    shadow = 'shadow-2xl shadow-cyan-500/50';
+    animationStyles = 'animate-pulse-border';
     termTextColor = 'text-cyan-300';
     termIconColor = 'text-cyan-400';
-    innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(34,211,238,0.6),_inset_0_0_0_3px_rgba(20,83,96,0.3)]'; 
+    innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(34,211,238,0.6),_inset_0_0_0_3px_rgba(20,83,96,0.3)]';
     if (isPlayable) {
         newBadge = (
-            <div 
+            <div
               className={`absolute -top-3 -right-3 bg-gradient-to-br from-cyan-400 to-teal-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-md shadow-lg transform z-10 animate-pulse-new-badge group-hover:scale-105 transition-transform border-2 border-slate-800`}
               aria-hidden="true"
             >
@@ -107,23 +107,23 @@ const CardComponent: React.FC<CardComponentProps> = ({
             </div>
         );
     }
-  } else if (!isPlayable) { 
-    cardGradientValue = 'linear-gradient(to bottom right, #334155, #0f172a)'; 
-    borderColor = 'border-slate-700'; 
-    shadow = 'shadow-lg shadow-slate-950/40'; 
-    animationStyles += ' opacity-60 saturate-[0.6]'; 
-    hoverStyles = ''; 
-    innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(51,65,85,0.5)]'; 
-  } else { 
-    borderColor = 'border-slate-500 group-hover:border-cyan-500'; 
-    shadow = 'shadow-xl shadow-slate-900/60'; 
-    hoverStyles = 'group-hover:shadow-2xl group-hover:shadow-cyan-600/30 group-hover:shadow-[inset_0_0_0_1px_rgba(34,211,238,0.5)]'; 
+  } else if (!isPlayable) {
+    cardGradientValue = 'linear-gradient(to bottom right, #334155, #0f172a)';
+    borderColor = 'border-slate-700';
+    shadow = 'shadow-lg shadow-slate-950/40';
+    animationStyles += ' opacity-60 saturate-[0.6]';
+    hoverStyles = '';
+    innerBorderStyle = 'shadow-[inset_0_0_0_1px_rgba(51,65,85,0.5)]';
+  } else {
+    borderColor = 'border-slate-500 group-hover:border-cyan-500';
+    shadow = 'shadow-xl shadow-slate-900/60';
+    hoverStyles = 'group-hover:shadow-2xl group-hover:shadow-cyan-600/30 group-hover:shadow-[inset_0_0_0_1px_rgba(34,211,238,0.5)]';
   }
 
   if (isPlayable) {
     cursorStyles = 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-400/80 focus:ring-offset-2 focus:ring-offset-slate-900 transform group-hover:scale-[1.03]';
   }
-  
+
   const finalBackgroundImageStyle = `url("${subtleCardStockPattern}"), ${cardGradientValue}`;
 
   let statusIcon = null;
@@ -147,7 +147,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
   return (
     <div
       className={`${baseContainerClasses} ${borderColor} ${shadow} ${cursorStyles} ${animationStyles} ${hoverStyles} ${innerBorderStyle}`}
-      style={{ 
+      style={{
         backgroundImage: finalBackgroundImageStyle,
       }}
       onClick={handleCardClick}
@@ -158,7 +158,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
     >
       {newBadge}
       {statusIcon && (
-        <div 
+        <div
             className="absolute top-2.5 right-2.5"
             role="status"
             aria-label={statusLabel}
@@ -172,7 +172,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
           <SparklesIcon className={`w-5 h-5 mr-2 ${termIconColor} flex-shrink-0`} aria-hidden="true" />
           {card.term}
         </h3>
-        
+
         <div className="mb-3">
           <p className="text-xs font-semibold flex items-start mb-0.5 text-slate-400 uppercase tracking-wider">
             <TagIcon className="w-3.5 h-3.5 mr-1.5 mt-px text-slate-500 flex-shrink-0" aria-hidden="true" />

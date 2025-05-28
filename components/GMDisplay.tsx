@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Card, GameStage, ChallengeHistoryEntry } from '../types'; // Added ChallengeHistoryEntry
-import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentCheckIcon, SparklesIcon, InformationCircleIcon, CurrencyYenIcon } from './icons.tsx'; 
-import LoadingSpinner from './LoadingSpinner.tsx';
+import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentCheckIcon, SparklesIcon, InformationCircleIcon, CurrencyYenIcon } from './icons';
+import LoadingSpinner from './LoadingSpinner';
 
 interface GMDisplayProps {
   message: string;
-  initialChallenge?: string | null; 
+  initialChallenge?: string | null;
   currentChallenge: string;
   challengeHistory?: ChallengeHistoryEntry[]; // Updated type
   isLoading?: boolean;
@@ -17,23 +17,23 @@ interface GMDisplayProps {
   maxTurns?: number;
   stage?: GameStage;
   finalScore?: number;
-  cumulativeCost?: number; 
+  cumulativeCost?: number;
 }
 
-const GMDisplay: React.FC<GMDisplayProps> = ({ 
-    message, 
-    initialChallenge, 
-    currentChallenge, 
+const GMDisplay: React.FC<GMDisplayProps> = ({
+    message,
+    initialChallenge,
+    currentChallenge,
     challengeHistory,
-    isLoading, 
-    lastPlayedCard, 
-    turn, 
+    isLoading,
+    lastPlayedCard,
+    turn,
     maxTurns,
     stage,
     finalScore,
-    cumulativeCost 
+    cumulativeCost
 }) => {
-  
+
   const isAdvice = stage !== GameStage.GameOver && message.toLowerCase().startsWith("専門家からのアドバイス:");
   const displayTitleBase = isAdvice ? "専門家からのアドバイス" : "ゲームマスターからのメッセージ";
   const displayMessageContent = isAdvice ? message.substring("専門家からのアドバイス:".length).trimStart() : message;
@@ -93,7 +93,7 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
           </div>
 
           <hr className="my-6 border-slate-600" />
-          
+
           <div className="mt-4">
             <h3 className="text-lg font-semibold text-teal-300 flex items-center mb-2">
               <ChatBubbleLeftEllipsisIcon className="w-5 h-5 mr-2 text-teal-400" aria-hidden="true"/>
@@ -104,12 +104,12 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{typedContent}</ReactMarkdown>
             </div>
           </div>
-          
+
           {cumulativeCost !== undefined && ( // This shows the FINAL cumulative cost, separate from per-step
             <div className="mt-6 p-3 bg-slate-600/40 rounded-md border border-slate-500/60 text-center shadow">
               <p className="text-sm font-medium text-amber-300 flex items-center justify-center">
                 <CurrencyYenIcon className="w-4 h-4 mr-1.5 text-amber-400" aria-hidden="true"/>
-                最終累計コスト: 
+                最終累計コスト:
                 <span className="ml-1.5 font-bold text-amber-200 text-base">{cumulativeCost}</span>
               </p>
             </div>
@@ -118,7 +118,7 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
           <div className="mt-8 p-5 bg-gradient-to-br from-cyan-700/50 via-slate-700/60 to-teal-700/50 rounded-lg border border-cyan-600/80 text-center shadow-2xl">
             <h4 className="text-xl font-semibold text-cyan-200 mb-2">最終スコア</h4>
             <p className="text-5xl font-bold text-white tracking-tight">
-              {finalScore} 
+              {finalScore}
               <span className="text-2xl text-cyan-300 align-baseline"> / 100</span>
             </p>
             <p className="mt-3 text-sm text-slate-400">ゲーム終了！お疲れ様でした。</p>
@@ -138,7 +138,7 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
               </div>
             </div>
           )}
-          
+
           {currentChallenge && ( // Always show current challenge if available in non-GameOver stages
             <div className="mb-5">
               <h2 className="text-lg font-semibold text-cyan-400 flex items-center mb-2">

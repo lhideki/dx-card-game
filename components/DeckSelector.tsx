@@ -1,18 +1,18 @@
 import React from 'react';
 import { Deck }  from '../types';
-import { 
-  CpuChipIcon, 
-  CircleStackIcon, 
-  UserCircleIcon, 
-  LightBulbIcon, 
-  ShieldCheckIcon, 
-  BuildingStorefrontIcon, 
+import {
+  CpuChipIcon,
+  CircleStackIcon,
+  UserCircleIcon,
+  LightBulbIcon,
+  ShieldCheckIcon,
+  BuildingStorefrontIcon,
   GlobeAltIcon,
   UserGroupIcon, // Added
   BoltIcon,        // Added
   RocketLaunchIcon, // Added
   ChartPieIcon     // Added
-} from './icons.tsx';
+} from './icons';
 
 interface DeckSelectorProps {
   decks: Deck[];
@@ -25,19 +25,19 @@ const DeckIcon: React.FC<{deckId: string}> = ({ deckId }) => {
   const iconColor = "text-cyan-500 group-hover:text-cyan-400 group-focus:text-cyan-400";
   const iconColorAlt = "text-teal-500 group-hover:text-teal-400 group-focus:text-teal-400";
   const iconSize = "w-10 h-10 mb-3 transition-colors duration-200";
-  
+
   switch (deckId) {
-    case 'deck_core_dx_strategy': 
+    case 'deck_core_dx_strategy':
       return <LightBulbIcon className={`${iconSize} ${iconColor}`} />;
-    case 'deck_customer_experience_innovator': 
+    case 'deck_customer_experience_innovator':
       return <UserGroupIcon className={`${iconSize} ${iconColorAlt}`} />;
-    case 'deck_operational_excellence_automation': 
+    case 'deck_operational_excellence_automation':
       return <BoltIcon className={`${iconSize} ${iconColor}`} />;
-    case 'deck_agile_product_development': 
+    case 'deck_agile_product_development':
       return <RocketLaunchIcon className={`${iconSize} ${iconColorAlt}`} />;
-    case 'deck_data_analytics_ai': 
+    case 'deck_data_analytics_ai':
       return <ChartPieIcon className={`${iconSize} ${iconColor}`} />;
-    case 'deck_secure_digital_infrastructure': 
+    case 'deck_secure_digital_infrastructure':
       return <ShieldCheckIcon className={`${iconSize} ${iconColorAlt}`} />;
     // Fallback for any potentially unmapped old IDs or new ones during transition
     case 'deck_agile_innovator': return <CpuChipIcon className={`${iconSize} ${iconColor}`} />; // old
@@ -46,7 +46,7 @@ const DeckIcon: React.FC<{deckId: string}> = ({ deckId }) => {
     case 'deck_secure_infra_ops': return <ShieldCheckIcon className={`${iconSize} ${iconColorAlt}`} />; // old, maps to new
     case 'deck_customer_centric': return <BuildingStorefrontIcon className={`${iconSize} ${iconColor}`} />; // old
     case 'deck_future_tech_pioneer': return <GlobeAltIcon className={`${iconSize} ${iconColorAlt}`} />; // old
-    default: 
+    default:
       return <LightBulbIcon className={`${iconSize} text-slate-500`} />;
   }
 };
@@ -65,7 +65,7 @@ const DeckSelectorComponent: React.FC<DeckSelectorProps> = ({ decks, onSelectDec
           const buttonBaseClasses = "group bg-slate-700 p-5 rounded-lg shadow-xl flex flex-col items-center text-center h-full border border-slate-600 focus:outline-none";
           const enabledButtonClasses = "hover:bg-slate-600/70 hover:shadow-teal-500/10 transition-all duration-300 ease-in-out transform hover:scale-[1.03] focus:ring-2 focus:ring-teal-500 focus:ring-opacity-70 hover:border-teal-600";
           const disabledButtonClasses = "opacity-50 cursor-not-allowed saturate-50 border-slate-700 shadow-inner";
-          
+
           return (
             <button
               key={deck.id}
