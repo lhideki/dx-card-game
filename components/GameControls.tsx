@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowPathIcon, AcademicCapIcon, ArrowsRightLeftIcon } from './icons.tsx'; // Added ArrowsRightLeftIcon
+import { ArrowPathIcon, AcademicCapIcon, ArrowsRightLeftIcon } from './icons'; // Added ArrowsRightLeftIcon
 
 interface GameControlsProps {
   shufflesRemaining: number;
@@ -36,11 +36,11 @@ const GameControls: React.FC<GameControlsProps> = ({
   const gameIsActive = turn > 0 && turn <= maxTurns;
 
   if (!gameIsActive) {
-    return null; 
+    return null;
   }
 
   const baseButtonClasses = "px-4 py-2.5 font-medium rounded-md shadow-lg hover:shadow-xl transition-all duration-200 ease-in-out flex items-center justify-center focus:outline-none focus:ring-2 transform active:scale-95 w-full sm:w-auto text-sm border";
-  
+
   const enabledShuffleClasses = "bg-cyan-600 hover:bg-cyan-500 text-white focus:ring-cyan-400/70 border-cyan-700 hover:border-cyan-500 shadow-cyan-900/30 hover:shadow-cyan-700/40";
   const enabledAdviceClasses = "bg-teal-600 hover:bg-teal-500 text-white focus:ring-teal-400/70 border-teal-700 hover:border-teal-500 shadow-teal-900/30 hover:shadow-teal-700/40";
   const enabledSwitchClasses = "bg-indigo-600 hover:bg-indigo-500 text-white focus:ring-indigo-400/70 border-indigo-700 hover:border-indigo-500 shadow-indigo-900/30 hover:shadow-indigo-700/40";
@@ -73,7 +73,7 @@ const GameControls: React.FC<GameControlsProps> = ({
           アドバイス ({adviceRemaining}回)
         </button>
       </div>
-      
+
       {deckId1 && deckId2 && (
         <div className="pt-4 border-t border-slate-600 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
           <span className="text-sm text-slate-300 hidden sm:block">スキルセット切替:</span>

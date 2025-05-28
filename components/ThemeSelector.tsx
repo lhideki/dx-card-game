@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Theme }  from '../types';
-import { LightBulbIcon, UserGroupIcon, BoltIcon, RocketLaunchIcon, UsersIcon, ChartPieIcon, TruckIcon, InformationCircleIcon } from './icons.tsx';
+import { LightBulbIcon, UserGroupIcon, BoltIcon, RocketLaunchIcon, UsersIcon, ChartPieIcon, TruckIcon, InformationCircleIcon } from './icons';
 
 interface ThemeSelectorProps {
   themes: Theme[];
@@ -26,7 +26,7 @@ const GameRulesOverview: React.FC = () => (
         'ゲーム中2回まで専門家から「アドバイス」を受けられます。'
       ].map((rule, index) => (
         <li key={index} className="flex items-start">
-          <span className="text-cyan-500 mr-2 leading-tight">›</span> 
+          <span className="text-cyan-500 mr-2 leading-tight">›</span>
           {rule}
         </li>
       ))}
