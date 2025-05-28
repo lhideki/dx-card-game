@@ -5,6 +5,8 @@
 
 ## 必要環境
 - Node.js (推奨バージョン18以上)
+- Docker
+- gcloud CLI
 
 ## セットアップ
 1. 依存パッケージのインストール
@@ -37,9 +39,9 @@ npm run build
 
 カードセットやテーマを追加・編集することで、独自のゲームルールを作成することも可能です。
 
-## AWS App Runnerでのデプロイ例
+## Cloud Run向けDockerfile例
 
-このアプリをAWS App Runnerで動かす場合、以下のようなDockerfileを用意してビルドします。
+Cloud Runへデプロイするための基本的なDockerfile例です。コンテナ実行時にCloud Runから渡される`PORT`変数を利用してNext.jsを起動します。
 
 ```Dockerfile
 FROM node:18
@@ -49,21 +51,21 @@ RUN npm install
 COPY . .
 RUN npm run build
 ENV HOSTNAME=0.0.0.0
-CMD ["npm", "start"]
+EXPOSE 8080
+CMD ["sh", "-c", "next start -p $PORT"]
 ```
-
-ビルド後、App Runnerのサービス設定で上記コンテナイメージを指定し、`HOSTNAME` 環境変数を`0.0.0.0`に設定してください。これによりヘルスチェックが通りやすくなります。
 
 ### ローカルでのDocker動作確認
 ```bash
 docker build -t dx-card-game .
-docker run -p 3000:3000 dx-card-game
+docker run -p 8080:8080 -e PORT=8080 dx-card-game
 ```
+
 ## Google Cloud Runへのデプロイ
 
 以下はGoogle Cloud Runでデプロイする一例です。事前に`gcloud` CLIとGoogle Cloudプロジェクトの設定を済ませてください。
 
-1. DockerイメージをビルドしてContainer Registryへ送信
+1. DockerイメージをビルドしてArtifact Registryへ送信
    ```bash
    gcloud builds submit --tag gcr.io/PROJECT_ID/dx-card-game
    ```
@@ -73,6 +75,83 @@ docker run -p 3000:3000 dx-card-game
      --image gcr.io/PROJECT_ID/dx-card-game \
      --platform managed \
      --region asia-northeast1 \
-     --allow-unauthenticated
+     --allow-unauthenticated \
+     --set-env-vars GEMINI_API_KEY=YOUR_API_KEY
    ```
    デプロイ完了後、表示されるURLからアプリにアクセスできます。
+
+### YAMLによるデプロイ
+
+本リポジトリにはCloud Runサービス定義`cloudrun.yaml`を同梱しています。`YOUR_API_KEY`
+を実際の値に変更したうえで、以下のコマンドで適用できます。
+
+```bash
+gcloud run services replace cloudrun.yaml
+```
+
+`cloudrun.yaml`の内容は次のとおりです。
+
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dx
+  namespace: '537832106570'
+  labels:
+    managed-by: google-ai-studio
+    cloud.googleapis.com/location: us-west1
+  annotations:
+    serving.knative.dev/creator: hideki@inoue-kobo.com
+    serving.knative.dev/lastModifier: hideki@inoue-kobo.com
+    generativelanguage.googleapis.com/type: applet
+    run.googleapis.com/ingress: all
+    run.googleapis.com/invoker-iam-disabled: 'true'
+    run.googleapis.com/build-enable-automatic-updates: 'false'
+spec:
+  template:
+    metadata:
+      labels:
+        run.googleapis.com/startupProbeType: Default
+      annotations:
+        run.googleapis.com/sessionAffinity: 'false'
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '3'
+        run.googleapis.com/base-images: '{"":"us-central1-docker.pkg.dev/serverless-runtimes/google-22/runtimes/nodejs22"}'
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: 537832106570-compute@developer.gserviceaccount.com
+      containers:
+      - image: us-docker.pkg.dev/cloudrun/container/aistudio/applet-proxy
+        ports:
+        - name: http1
+          containerPort: 8080
+        env:
+        - name: API_KEY
+          value: YOUR_API_KEY
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 1000m
+        volumeMounts:
+        - name: applet
+          mountPath: /app/dist
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 8080
+      volumes:
+      - name: applet
+        csi:
+          driver: gcsfuse.run.googleapis.com
+          readOnly: true
+          volumeAttributes:
+            bucketName: ai-studio-bucket-537832106570-us-west1
+            mountOptions: only-dir=services/dx/version-5/compiled
+      runtimeClassName: run.googleapis.com/linux-base-image-update
+  traffic:
+  - percent: 100
+    latestRevision: true
+```
