@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-
-const API_KEY = process.env.GEMINI_API_KEY;
-if (!API_KEY) {
-  throw new Error('GEMINI_API_KEY environment variable not set. Please ensure it\'s available.');
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
 const modelName = 'gemini-2.5-flash-preview-04-17';
 
 const MAX_RETRIES = 3;
@@ -16,6 +9,16 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function POST(request: NextRequest) {
   try {
+    const API_KEY = process.env.GEMINI_API_KEY;
+    if (!API_KEY) {
+      return NextResponse.json(
+        { error: 'GEMINI_API_KEY environment variable not set. Please ensure it\'s available.' },
+        { status: 500 }
+      );
+    }
+
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
+
     const { currentChallenge, themeName } = await request.json();
 
     const prompt = `あなたはゲームマスターです。プレイヤーがカードをシャッフルした結果、予期せぬイベントが発生しました。
