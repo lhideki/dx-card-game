@@ -14,6 +14,7 @@ import {
   shuffleChallengeEffect,
   getFinalEvaluation
 } from './services/geminiService';
+import { shuffleArray, drawCards as drawCardsUtil, dealHand } from '@/utils/cardUtils';
 
 const MAX_CONCURRENT_PRE_EVALUATIONS = 3;
 
@@ -64,47 +65,22 @@ const App = (): JSX.Element => {
     }
   }, [gameState.newlyDrawnCardId]);
 
-  const shuffleArray = <T,>(array: T[]): T[] => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-
-  const drawCards = useCallback((
-    currentDeck: Card[], 
-    count: number, 
-    allCardsForThisDeck: Card[],
-    currentHandForThisDeck: Card[],
-  ): { drawn: Card[], newDeck: Card[] } => {
-    let deckToDrawFrom = [...currentDeck];
-    const globalLastPlayedCard = gameStateRef.current.lastPlayedCard;
-
-    const cardsToExcludeFromRefill = new Set<string>();
-    currentHandForThisDeck.forEach(c => cardsToExcludeFromRefill.add(c.id));
-    deckToDrawFrom.forEach(c => cardsToExcludeFromRefill.add(c.id)); 
-    if (globalLastPlayedCard && allCardsForThisDeck.some(c => c.id === globalLastPlayedCard.id)) {
-         cardsToExcludeFromRefill.add(globalLastPlayedCard.id);
-    }
-
-    if (deckToDrawFrom.length < count) {
-      const availableToRefill = allCardsForThisDeck.filter(c => !cardsToExcludeFromRefill.has(c.id));
-      deckToDrawFrom = shuffleArray([...deckToDrawFrom, ...shuffleArray(availableToRefill)]);
-      
-      if (deckToDrawFrom.length < count) { 
-        const desperationRefill = allCardsForThisDeck.filter(c => 
-            !currentHandForThisDeck.some(hc => hc.id === c.id) && 
-            (!globalLastPlayedCard || c.id !== globalLastPlayedCard.id || !allCardsForThisDeck.some(ac => ac.id === globalLastPlayedCard.id))
-        );
-        deckToDrawFrom = shuffleArray(desperationRefill);
-      }
-    }
-    const drawn = deckToDrawFrom.slice(0, Math.min(count, deckToDrawFrom.length));
-    const newDeckState = deckToDrawFrom.slice(Math.min(count, deckToDrawFrom.length));
-    return { drawn, newDeck: newDeckState };
-  }, []); 
+  const drawCards = useCallback(
+    (
+      currentDeck: Card[],
+      count: number,
+      allCardsForThisDeck: Card[],
+      currentHandForThisDeck: Card[],
+    ): { drawn: Card[]; newDeck: Card[] } =>
+      drawCardsUtil(
+        currentDeck,
+        count,
+        allCardsForThisDeck,
+        currentHandForThisDeck,
+        gameStateRef.current.lastPlayedCard,
+      ),
+    []
+  );
 
 
   const cancelAllPreEvaluations = () => {
@@ -310,18 +286,14 @@ const App = (): JSX.Element => {
         }
 
         const availableCardsDeck1 = gameStateRef.current.availableCardsForDeck1;
-        const { drawn: drawn1, newDeck: newDeckState1 } = drawCards(
-            shuffleArray([...availableCardsDeck1]), 
-            INITIAL_HAND_SIZE, 
+        const { hand: drawn1, deck: newDeckState1 } = dealHand(
             availableCardsDeck1,
-            [], 
+            INITIAL_HAND_SIZE,
         );
-        
-        const { drawn: drawn2, newDeck: newDeckState2 } = drawCards(
-            shuffleArray([...cardsForThisDeck]), 
-            INITIAL_HAND_SIZE, 
+
+        const { hand: drawn2, deck: newDeckState2 } = dealHand(
             cardsForThisDeck,
-            [], 
+            INITIAL_HAND_SIZE,
         );
 
         const initialCumulativeCost = 0;
@@ -536,17 +508,15 @@ const App = (): JSX.Element => {
     try {
       const newChallengeSituation = await shuffleChallengeEffect(current.currentChallenge, current.selectedTheme.name);
       
-      const { drawn: drawn1, newDeck: newDeckState1 } = drawCards(
-          shuffleArray([...current.availableCardsForDeck1]), 
-          INITIAL_HAND_SIZE, 
+      const { hand: drawn1, deck: newDeckState1 } = dealHand(
           current.availableCardsForDeck1,
-          [], 
+          INITIAL_HAND_SIZE,
+          current.lastPlayedCard,
       );
-      const { drawn: drawn2, newDeck: newDeckState2 } = drawCards(
-          shuffleArray([...current.availableCardsForDeck2]), 
-          INITIAL_HAND_SIZE, 
+      const { hand: drawn2, deck: newDeckState2 } = dealHand(
           current.availableCardsForDeck2,
-          [], 
+          INITIAL_HAND_SIZE,
+          current.lastPlayedCard,
       );
       
       const shuffleChallengeHistoryEntry: ChallengeHistoryEntry = {
