@@ -1,4 +1,6 @@
 
+"use client";
+
 import React from 'react';
 import { Theme }  from '../types';
 import { LightBulbIcon, UserGroupIcon, BoltIcon, RocketLaunchIcon, UsersIcon, ChartPieIcon, TruckIcon, InformationCircleIcon } from './icons.tsx';

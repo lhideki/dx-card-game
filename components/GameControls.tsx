@@ -1,4 +1,6 @@
 
+"use client";
+
 import React from 'react';
 import { ArrowPathIcon, AcademicCapIcon, ArrowsRightLeftIcon } from './icons.tsx'; // Added ArrowsRightLeftIcon
 

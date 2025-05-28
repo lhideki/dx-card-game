@@ -1,4 +1,6 @@
 
+"use client";
+
 import React, { useState } from 'react';
 import { Card, GameState } from '../types'; 
 import CardComponent from './CardComponent';

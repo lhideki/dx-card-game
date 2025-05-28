@@ -1,4 +1,6 @@
 
+"use client";
+
 import React from 'react';
 import { Card, GameState } from '../types'; // GameState for evaluationStatus type
 import { InfoIcon, BriefcaseIcon, SparklesIcon, TagIcon, ClockIcon, ExclamationTriangleIcon, CurrencyYenIcon } from './icons.tsx'; 
