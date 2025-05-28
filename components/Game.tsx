@@ -4,7 +4,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GameState, Card, Theme, GameStage, Deck, EvaluationResponse, ChallengeHistoryEntry } from '../types';
 import { INITIAL_DX_CARDS, GAME_THEMES, THEME_INITIAL_CHALLENGES, MAX_TURNS, INITIAL_HAND_SIZE, SHUFFLES_ALLOWED, ADVICE_ALLOWED, GAME_DECKS } from '../constants';
 import ThemeSelector from './ThemeSelector';
+<<<<<<< HEAD
 import DeckSelectorComponent from './DeckSelector';
+=======
+import DeckSelectorComponent from './DeckSelector'; 
+>>>>>>> origin/main
 import GameBoard from './GameBoard';
 import GMDisplay from './GMDisplay';
 import GameControls from './GameControls';
@@ -19,7 +23,11 @@ import { shuffleArray, drawCards as drawCardsUtil, dealHand } from '@/utils/card
 
 const MAX_CONCURRENT_PRE_EVALUATIONS = 3;
 
+<<<<<<< HEAD
 const CardGame = (): React.JSX.Element => {
+=======
+const CardGame = (): JSX.Element => {
+>>>>>>> origin/main
   const initialGameState: GameState = {
     stage: GameStage.ThemeSelection,
     selectedTheme: null,

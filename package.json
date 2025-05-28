@@ -9,6 +9,12 @@
     "start": "next start"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "next": "14.2.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+>>>>>>> origin/main
     "@google/genai": "^1.0.1",
     "next": "^14.2.29",
     "react": "^18.2.0",
