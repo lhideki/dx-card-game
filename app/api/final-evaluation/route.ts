@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { FinalEvaluationResponse } from '../../../types';
-
-const API_KEY = process.env.GEMINI_API_KEY;
-if (!API_KEY) {
-  throw new Error('GEMINI_API_KEY environment variable not set. Please ensure it\'s available.');
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
 const modelName = 'gemini-2.5-flash-preview-04-17';
 
 const MAX_RETRIES = 3;
@@ -38,6 +31,16 @@ const parseJsonFromText = <T,>(text: string): T => {
 
 export async function POST(request: NextRequest) {
   try {
+    const API_KEY = process.env.GEMINI_API_KEY;
+    if (!API_KEY) {
+      return NextResponse.json(
+        { error: 'GEMINI_API_KEY environment variable not set. Please ensure it\'s available.' },
+        { status: 500 }
+      );
+    }
+
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
+
     const { finalChallenge, themeName, challengeHistory, cumulativeCost } = await request.json();
 
     const historyString = challengeHistory.map((item: string, index: number) => `ステップ${index + 1}: ${item}`).join('\n');
