@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Card, GameStage, ChallengeHistoryEntry } from '../types'; // Added ChallengeHistoryEntry
@@ -37,6 +37,21 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
   const isAdvice = stage !== GameStage.GameOver && message.toLowerCase().startsWith("専門家からのアドバイス:");
   const displayTitleBase = isAdvice ? "専門家からのアドバイス" : "ゲームマスターからのメッセージ";
   const displayMessageContent = isAdvice ? message.substring("専門家からのアドバイス:".length).trimStart() : message;
+
+  const [typedContent, setTypedContent] = useState(displayMessageContent);
+
+  useEffect(() => {
+    let index = 0;
+    setTypedContent('');
+    const interval = setInterval(() => {
+      index += 1;
+      setTypedContent(displayMessageContent.slice(0, index));
+      if (index >= displayMessageContent.length) {
+        clearInterval(interval);
+      }
+    }, 40);
+    return () => clearInterval(interval);
+  }, [displayMessageContent]);
 
   return (
     <div className="bg-slate-700/60 backdrop-blur-md p-6 rounded-lg shadow-xl mb-8 border border-slate-600">
@@ -86,7 +101,7 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
             </h3>
             <div className="text-slate-200 leading-relaxed markdown-content text-base">
                {/* message prop now contains only finalEvalResult.evaluationText from App.tsx */}
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{message}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{typedContent}</ReactMarkdown>
             </div>
           </div>
           
@@ -158,7 +173,7 @@ const GMDisplay: React.FC<GMDisplayProps> = ({
               {displayTitleBase}:
             </h3>
             <div className="text-slate-200 leading-normal markdown-content text-base">
-               <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayMessageContent}</ReactMarkdown>
+               <ReactMarkdown remarkPlugins={[remarkGfm]}>{typedContent}</ReactMarkdown>
             </div>
           </div>
         </>
