@@ -2,9 +2,9 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { Card, EvaluationResponse, FinalEvaluationResponse } from '../types';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.GEMINI_API_KEY;
 if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set. Please ensure it's available.");
+  throw new Error('GEMINI_API_KEY environment variable not set. Please ensure it\'s available.');
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
