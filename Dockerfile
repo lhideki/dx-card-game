@@ -1,5 +1,5 @@
-# Use Node.js 18 to install dependencies and build the Next.js app
-FROM node:18 AS build
+# Use Node.js 20 to install dependencies and build the Next.js app (required for @google/genai)
+FROM node:20 AS build
 WORKDIR /app
 
 # Install dependencies
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build && npm prune --omit=dev
 
 # Production image
-FROM node:18-slim AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
