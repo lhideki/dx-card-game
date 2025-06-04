@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, GameState } from '../types'; // GameState for evaluationStatus type
 import { InfoIcon, BriefcaseIcon, SparklesIcon, TagIcon, ClockIcon, ExclamationTriangleIcon, CurrencyYenIcon } from './icons';
 
@@ -76,6 +76,19 @@ const CardComponent: React.FC<CardComponentProps> = ({
     }
   };
 
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    const rotateX = (-y / rect.height) * 10;
+    const rotateY = (x / rect.width) * 10;
+    setTilt({ x: rotateX, y: rotateY });
+  };
+
+  const resetTilt = () => setTilt({ x: 0, y: 0 });
+
   const baseContainerClasses = 'relative rounded-xl p-4 flex flex-col justify-between transition-all duration-300 ease-in-out border-2 w-[240px] min-h-[380px] group'; // Increased min-h for cost
 
   let cardGradientValue = 'linear-gradient(to bottom right, #475569, #1e293b)';
@@ -147,27 +160,31 @@ const CardComponent: React.FC<CardComponentProps> = ({
   return (
     <div
       className={`${baseContainerClasses} ${borderColor} ${shadow} ${cursorStyles} ${animationStyles} ${hoverStyles} ${innerBorderStyle}`}
-      style={{
-        backgroundImage: finalBackgroundImageStyle,
-      }}
+      style={{ backgroundImage: finalBackgroundImageStyle }}
       onClick={handleCardClick}
       role={isPlayable ? "button" : undefined}
       tabIndex={isPlayable ? 0 : undefined}
       onKeyDown={isPlayable ? (e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick() : undefined}
       aria-label={`${card.term} カード${isPlayable ? '. クリックまたはEnterで使用します。' : '.'}${statusLabel ? ` (${statusLabel})` : ''}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={resetTilt}
     >
-      {newBadge}
-      {statusIcon && (
-        <div
+      <div
+        className="transition-transform transform-gpu"
+        style={{ transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }}
+      >
+        {newBadge}
+        {statusIcon && (
+          <div
             className="absolute top-2.5 right-2.5"
             role="status"
             aria-label={statusLabel}
             title={statusLabel}
-        >
-          {statusIcon}
-        </div>
-      )}
-      <div>
+          >
+            {statusIcon}
+          </div>
+        )}
+        <div>
         <h3 className={`text-xl font-bold mb-2.5 flex items-center ${termTextColor} tracking-tight`}>
           <SparklesIcon className={`w-5 h-5 mr-2 ${termIconColor} flex-shrink-0`} aria-hidden="true" />
           {card.term}
@@ -215,6 +232,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
